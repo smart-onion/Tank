@@ -12,9 +12,10 @@ SplashState::~SplashState()
 
 void SplashState::Init()
 {
-	this->data->assets.LoadTexture("SplashStateBG", SPLASH_SCENE_BACKGROUND_FILEPATH);
-	background.setTexture(this->data->assets.GetTexture("SplashStateBG"));
-	background.setPosition(0, 0);
+	this->data->assets.LoadTexture("battlecity_text", "resources/menu/battlecity_text.png");
+	background.setTexture(this->data->assets.GetTexture("battlecity_text"));
+	background.scale(0.8, 0.8);
+	background.setPosition(SCREEN_WIDTH / 2 - background.getGlobalBounds().width / 2, SCREEN_HIEGHT * 0.1);
 }
 
 void SplashState::HandleInput()
@@ -41,7 +42,7 @@ void SplashState::Update(float dt)
 
 void SplashState::Draw(float dt)
 {
-	this->data->window.clear(sf::Color::Red);
+	this->data->window.clear(sf::Color::Black);
 	this->data->window.draw(this->background);
 	this->data->window.display();
 }

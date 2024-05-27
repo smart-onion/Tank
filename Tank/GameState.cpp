@@ -6,7 +6,13 @@ GameState::GameState(std::shared_ptr<GameData> data)
 	player = std::make_unique<Player>(this->data);
 }
 
-GameState::~GameState() {}
+GameState::~GameState() 
+{
+	for (auto* i : this->bullets)
+	{
+		delete i;
+	}
+}
 
 void GameState::Init()
 {
@@ -23,36 +29,38 @@ void GameState::HandleInput()
 			this->data->window.close();
 		}
 		
-		if (sf::Event::KeyPressed)
-		{
-			if (event.key.code == sf::Keyboard::Down)
-			{
-				player->Move(0.f, 1.f);
-			}
-			if (event.key.code == sf::Keyboard::Up)
-			{
-				player->Move(0.f, -1.f);
-			}
-			if (event.key.code == sf::Keyboard::Left)
-			{
-				player->Move(-1.f, 0.f);
-			}
-			if (event.key.code == sf::Keyboard::Right)
-			{
-				player->Move(1.f, 0.f);
-			}
-			player->Rotate(event);
+		player->HandleEvents(event, bullets);
+		
 
-		}
-	
 	}
 
 
 }
 
+void GameState::UpdateBullet()
+{
+	unsigned int counter = 0;
+
+	for (auto* bullet : this->bullets)
+	{
+		bullet->update();
+
+		if (bullet->getBounds().top + bullet->getBounds().height < 0.f)
+		{
+			delete bullet;
+			bullets.erase(bullets.begin() + counter);
+			counter--;
+		}
+
+		counter++;
+	}
+}
+
 void GameState::Update(float dt)
 {
 	player->Update();
+
+	UpdateBullet();
 }
 
 void GameState::Draw(float dt)
@@ -61,6 +69,11 @@ void GameState::Draw(float dt)
 	
 	// drawing here
 	player->Render();
+
+	for (auto* i : this->bullets)
+	{
+		i->render(this->data->window);
+	}
 
 	this->data->window.display();
 }
